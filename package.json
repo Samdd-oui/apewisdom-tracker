@@ -1,0 +1,7 @@
+{
+  "name": "apewisdom-tracker",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "ApeWisdom Reddit sentiment tracker with historical data"
+}
