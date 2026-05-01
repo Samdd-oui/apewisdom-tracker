@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ApeWisdom Tracker</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--border:#30363d;--border2:#484f58;--text:#e6edf3;--text2:#8b949e;--text3:#6e7681;--green:#3fb950;--red:#f85149;--yellow:#d29922;--blue:#58a6ff;--green-bg:#0d1f12;--red-bg:#1f0d0d;--yellow-bg:#1f1800;--blue-bg:#0d1a2e;--r:6px;--r2:10px}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px}
+#root{max-width:1100px;margin:0 auto;padding:16px}
+.header{display:flex;align-items:center;justify-content:space-between;padding-bottom:12px;border-bottom:1px solid var(--border);margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.logo-text{font-size:17px;font-weight:600}
+.logo-sub{font-size:12px;color:var(--text3);font-family:monospace}
+.badge{font-size:11px;padding:2px 8px;border-radius:99px;font-weight:500}
+.bg{background:var(--green-bg);color:var(--green);border:1px solid #1a4d25}
+.by{background:var(--yellow-bg);color:var(--yellow);border:1px solid #4d3800}
+.header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.last-fetch{font-size:12px;color:var(--text3)}
+.btn{background:transparent;color:var(--text);border:1px solid var(--border2);font-size:13px;padding:5px 14px;border-radius:var(--r);cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--bg3)}
+.btn-sm{padding:3px 10px;font-size:12px}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;margin-bottom:16px}
+.metric{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:12px 14px}
+.ml{font-size:11px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.mv{font-size:22px;font-weight:600}
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:14px;overflow-x:auto}
+.tab{font-size:13px;padding:7px 16px;cursor:pointer;color:var(--text2);background:none;border:none;border-bottom:2px solid transparent;white-space:nowrap}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--text);border-bottom-color:var(--blue)}
+.frow{display:flex;gap:8px;margin-bottom:10px;align-items:center;flex-wrap:wrap}
+select{background:var(--bg2);color:var(--text);border:1px solid var(--border);font-size:13px;padding:5px 10px;border-radius:var(--r);cursor:pointer}
+input[type=text]{background:var(--bg2);color:var(--text);border:1px solid var(--border);font-size:13px;padding:5px 10px;border-radius:var(--r);width:150px;outline:none}
+.fl{font-size:12px;color:var(--text3)}
+.tw{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r2)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:8px 12px;font-weight:500;color:var(--text3);background:var(--bg2);border-bottom:1px solid var(--border);white-space:nowrap;font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+td{padding:8px 12px;border-bottom:1px solid var(--border);color:var(--text);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg2)}
+tr.sel td{background:#0d1a2e}
+.tp{font-family:monospace;font-size:12px;font-weight:600;padding:2px 7px;border-radius:4px;background:var(--bg3);border:1px solid var(--border2);color:var(--blue)}
+.up{color:var(--green)}.down{color:var(--red)}.muted{color:var(--text3)}
+.np{font-size:10px;padding:1px 5px;border-radius:3px;background:var(--yellow-bg);color:var(--yellow);border:1px solid #4d3800;font-weight:600;margin-left:5px}
+.hp{font-size:10px;padding:1px 5px;border-radius:3px;background:var(--red-bg);color:#ff7b72;border:1px solid #4d1a1a;font-weight:600;margin-left:5px}
+.detail{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:14px;margin-top:14px}
+.dh{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.ds{display:flex;gap:16px;font-size:13px;flex-wrap:wrap}
+.cl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin:12px 0 6px}
+.info-box{background:var(--blue-bg);border:1px solid #0d2a50;border-radius:var(--r2);padding:14px 16px;font-size:13px;color:var(--blue);margin-bottom:14px;line-height:1.8}
+.info-box code{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padding:1px 6px;font-family:monospace;font-size:12px;color:var(--text)}
+.ma-badge{font-size:10px;padding:1px 6px;border-radius:3px;background:var(--bg3);color:var(--text3);border:1px solid var(--border);margin-left:6px;vertical-align:middle}
+.ru{color:var(--green);font-size:11px}.rd{color:var(--red);font-size:11px}
+.spin{display:flex;align-items:center;justify-content:center;padding:3rem;color:var(--text3);gap:10px}
+.sp{width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+svg.spark{display:inline-block;vertical-align:middle}
+.insufficient{font-size:11px;color:var(--text3);font-style:italic}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+const {useState,useEffect,useMemo,useRef}=React;
+function fmt(n){if(!n&&n!==0)return"—";n=parseInt(n);return n>=1000?(n/1000).toFixed(1)+"k":String(n)}
+function pct(a,b){if(!b||b===0)return null;return(((a-b)/b)*100).toFixed(1)}
+function fmtDate(ts){try{return new Date(ts).toLocaleString('fr-FR',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}catch(e){return ts}}
+function fmtDay(ts){try{return new Date(ts).toLocaleDateString('fr-FR',{month:'short',day:'numeric'})}catch(e){return ts}}
+
+function avg(arr){if(!arr.length)return 0;return arr.reduce((a,b)=>a+b,0)/arr.length}
+
+// Moyenne mobile : compare moyenne mentions sur [now-days, now] vs [now-days*2, now-days]
+function getMA(ticker, rel, fk, days){
+  const now = Date.now();
+  const cut1 = now - days * 864e5;
+  const cut2 = now - days * 2 * 864e5;
+  const recent  = rel.filter(s=>new Date(s.ts).getTime()>=cut1).map(s=>s.filters[fk]?.find(d=>d.ticker===ticker)?.mentions).filter(v=>v!=null).map(Number);
+  const older   = rel.filter(s=>new Date(s.ts).getTime()>=cut2&&new Date(s.ts).getTime()<cut1).map(s=>s.filters[fk]?.find(d=>d.ticker===ticker)?.mentions).filter(v=>v!=null).map(Number);
+  if(!recent.length||!older.length)return null;
+  const maRecent=avg(recent), maOlder=avg(older);
+  if(maOlder===0)return null;
+  return pct(maRecent,maOlder);
+}
+
+function Trend({val}){
+  if(val===null||val===undefined)return React.createElement("span",{className:"muted"},"—");
+  const v=parseFloat(val);if(isNaN(v))return React.createElement("span",{className:"muted"},"—");
+  return React.createElement("span",{className:v>0?"up":v<0?"down":"muted"},(v>0?"+":"")+v+"%");
+}
+function Spark({data,color}){
+  if(!data||data.length<2)return null;
+  const w=60,h=18,vals=data.map(d=>d.v);
+  const mn=Math.min(...vals),mx=Math.max(...vals),range=mx-mn||1;
+  const pts=vals.map((v,i)=>`${(i/(vals.length-1))*w},${h-(((v-mn)/range)*(h-2))-1}`).join(" ");
+  return React.createElement("svg",{width:w,height:h,className:"spark"},
+    React.createElement("polyline",{points:pts,fill:"none",stroke:color||"#58a6ff",strokeWidth:"1.5",strokeLinejoin:"round"}));
+}
+function LineChartCanvas({data,dataKey,color,label}){
+  const ref=useRef();const chartRef=useRef();
+  useEffect(()=>{
+    if(!ref.current||!data||data.length<2)return;
+    if(chartRef.current)chartRef.current.destroy();
+    chartRef.current=new Chart(ref.current,{
+      type:"line",
+      data:{labels:data.map(d=>d.date),datasets:[{label,data:data.map(d=>d[dataKey]),borderColor:color,borderWidth:2,pointRadius:0,tension:0.3,fill:false}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:"#6e7681",maxTicksLimit:6,font:{size:11}},grid:{color:"#30363d"}},y:{ticks:{color:"#6e7681",font:{size:11}},grid:{color:"#30363d"}}}}
+    });
+    return()=>{if(chartRef.current)chartRef.current.destroy()};
+  },[data,dataKey,color,label]);
+  return React.createElement("div",{style:{height:"180px",position:"relative"}},
+    React.createElement("canvas",{ref,role:"img","aria-label":label}));
+}
+
+function App(){
+  const [history,setHistory]=useState([]);
+  const [loading,setLoading]=useState(true);
+  const [error,setError]=useState(null);
+  const [tab,setTab]=useState("live");
+  const [fk,setFk]=useState("wallstreetbets");
+  const [sel,setSel]=useState(null);
+  const [search,setSearch]=useState("");
+
+  useEffect(()=>{
+    fetch("data/history.json?_="+Date.now())
+      .then(r=>{if(!r.ok)throw new Error("HTTP "+r.status);return r.json()})
+      .then(d=>{setHistory(Array.isArray(d)?d:[]);setLoading(false)})
+      .catch(e=>{setError(e.message);setLoading(false)});
+  },[]);
+
+  const rel=useMemo(()=>history.filter(s=>s.filters&&s.filters[fk]),[history,fk]);
+  const latest=rel[rel.length-1];
+  const ld=useMemo(()=>latest?.filters[fk]||[],[latest,fk]);
+
+  // Vérifie si on a assez de données pour une fenêtre donnée (besoin de 2x la fenêtre)
+  function hasEnoughData(days){
+    const cut=Date.now()-days*2*864e5;
+    return rel.some(s=>new Date(s.ts).getTime()<cut);
+  }
+
+  function getHist(ticker){
+    return rel.map(s=>{const d=s.filters[fk]?.find(x=>x.ticker===ticker);return{ts:s.ts,date:fmtDay(s.ts),v:d?parseInt(d.mentions):0,rank:d?d.rank:null}}).filter(d=>d.v>0);
+  }
+
+  const emerging=useMemo(()=>{
+    if(rel.length<3)return new Set();
+    const cut=Math.max(0,rel.length-4);
+    const early=new Set(rel.slice(0,cut).flatMap(s=>s.filters[fk]?.slice(0,100).map(d=>d.ticker)||[]));
+    const recent=rel.slice(cut).flatMap(s=>s.filters[fk]?.slice(0,100).map(d=>d.ticker)||[]);
+    return new Set(recent.filter(t=>!early.has(t)));
+  },[rel,fk]);
+
+  const MA_DAYS = tab==="5d"?5:tab==="10d"?10:30;
+
+  const trendRows=useMemo(()=>{
+    if(!["5d","10d","30d"].includes(tab))return[];
+    return ld.slice(0,150)
+      .map(d=>({...d, trend: getMA(d.ticker, rel, fk, MA_DAYS)}))
+      .filter(d=>d.trend!==null)
+      .sort((a,b)=>parseFloat(b.trend)-parseFloat(a.trend));
+  },[tab,ld,rel,fk]);
+
+  let rows=[];
+  if(tab==="live")rows=ld.slice(0,100);
+  else if(["5d","10d","30d"].includes(tab))rows=trendRows;
+  else if(tab==="emerging")rows=ld.filter(d=>emerging.has(d.ticker)).slice(0,40);
+  if(search){const s=search.toUpperCase();rows=rows.filter(d=>d.ticker?.toUpperCase().includes(s)||d.name?.toUpperCase().includes(s))}
+
+  const selStock=ld.find(d=>d.ticker===sel);
+  const selHist=sel?getHist(sel):[];
+
+  const tabs=[
+    {id:"live",l:"Live"},
+    {id:"5d",l:"MM 5J"},
+    {id:"10d",l:"MM 10J"},
+    {id:"30d",l:"MM 30J"},
+    {id:"emerging",l:"Émergents"+(emerging.size>0?" ("+emerging.size+")":"")}
+  ];
+  const filts=[{v:"wallstreetbets",l:"r/wallstreetbets"},{v:"all-stocks",l:"All stocks"},{v:"stocks",l:"r/stocks"},{v:"options",l:"r/options"},{v:"investing",l:"r/investing"},{v:"Daytrading",l:"r/Daytrading"}];
+
+  const isTrendTab=["5d","10d","30d"].includes(tab);
+  const enoughData=isTrendTab&&hasEnoughData(MA_DAYS);
+
+  if(loading)return React.createElement("div",{className:"spin"},React.createElement("div",{className:"sp"}),React.createElement("span",null,"Chargement…"));
+
+  return React.createElement("div",null,
+    React.createElement("div",{className:"header"},
+      React.createElement("div",null,
+        React.createElement("div",{className:"logo-text"},"🦍 ApeWisdom Tracker"),
+        React.createElement("div",{className:"logo-sub"},"Reddit sentiment • historique automatique")
+      ),
+      React.createElement("div",{className:"header-right"},
+        rel.length>0&&React.createElement("span",{className:"last-fetch"},"Dernier: "+fmtDate(latest?.ts)),
+        React.createElement("span",{className:"badge "+(rel.length>0?"bg":"by")},rel.length>0?rel.length+" snapshots":"Aucune donnée"),
+        React.createElement("button",{className:"btn btn-sm",onClick:()=>window.location.reload()},"↻ Refresh")
+      )
+    ),
+    error&&React.createElement("div",{style:{background:"#1f0d0d",border:"1px solid #4d1a1a",borderRadius:"10px",padding:"12px 14px",color:"#ff7b72",marginBottom:"14px",fontSize:"13px"}},"Erreur: "+error),
+    rel.length===0&&!error&&React.createElement("div",{className:"info-box"},
+      React.createElement("strong",null,"Aucune donnée encore."),React.createElement("br",null),
+      "Le GitHub Action tourne automatiquement 3x/jour.",React.createElement("br",null),
+      "Pour forcer: repo GitHub → onglet ",React.createElement("code",null,"Actions")," → ",React.createElement("code",null,"Fetch ApeWisdom Data")," → ",React.createElement("code",null,"Run workflow")
+    ),
+    rel.length>0&&React.createElement(React.Fragment,null,
+      React.createElement("div",{className:"metrics"},
+        [{l:"Stocks live",v:ld.length},{l:"Snapshots",v:rel.length},{l:"Émergents",v:emerging.size},
+         {l:"Jours d'histo",v:rel.length>1?Math.round((new Date(rel[rel.length-1].ts)-new Date(rel[0].ts))/864e5):0}]
+          .map(m=>React.createElement("div",{key:m.l,className:"metric"},React.createElement("div",{className:"ml"},m.l),React.createElement("div",{className:"mv"},m.v)))
+      ),
+      React.createElement("div",{className:"tabs"},tabs.map(t=>React.createElement("button",{key:t.id,className:"tab"+(tab===t.id?" active":""),onClick:()=>{setTab(t.id);setSel(null)}},t.l))),
+
+      // Avertissement données insuffisantes
+      isTrendTab&&!enoughData&&React.createElement("div",{style:{background:"#1f1800",border:"1px solid #4d3800",borderRadius:"8px",padding:"10px 14px",color:"#d29922",marginBottom:"12px",fontSize:"13px"}},
+        "⏳ Données insuffisantes pour la MM "+MA_DAYS+"J — il faut "+(MA_DAYS*2)+" jours d'historique (période récente + période de référence). Les résultats affichés sont partiels."
+      ),
+
+      React.createElement("div",{className:"frow"},
+        React.createElement("span",{className:"fl"},"Source:"),
+        React.createElement("select",{value:fk,onChange:e=>{setFk(e.target.value);setSel(null)}},filts.map(f=>React.createElement("option",{key:f.v,value:f.v},f.l))),
+        React.createElement("input",{type:"text",placeholder:"Rechercher…",value:search,onChange:e=>setSearch(e.target.value)}),
+        search&&React.createElement("button",{className:"btn btn-sm",onClick:()=>setSearch("")},"✕"),
+        React.createElement("span",{className:"fl",style:{marginLeft:"auto"}},rows.length+" résultats",
+          isTrendTab&&React.createElement("span",{className:"ma-badge"},"Moyenne mobile × "+MA_DAYS+"J")
+        )
+      ),
+      React.createElement("div",{className:"tw"},
+        React.createElement("table",null,
+          React.createElement("thead",null,React.createElement("tr",null,
+            React.createElement("th",null,"#"),React.createElement("th",null,"Ticker"),React.createElement("th",null,"Nom"),
+            React.createElement("th",null,"Mentions"),React.createElement("th",null,"Upvotes"),React.createElement("th",null,"Δ 24h"),
+            isTrendTab&&React.createElement("th",null,"MM "+MA_DAYS+"J"),
+            (tab==="live"||tab==="emerging")&&rel.length>=2&&React.createElement("th",null,"Histo")
+          )),
+          React.createElement("tbody",null,rows.slice(0,60).map(d=>{
+            const rd=d.rank_24h_ago&&d.rank_24h_ago>0?d.rank_24h_ago-d.rank:null;
+            const md=d.mentions_24h_ago&&d.mentions_24h_ago>0?pct(parseInt(d.mentions),parseInt(d.mentions_24h_ago)):null;
+            const hist=(tab==="live"||tab==="emerging")&&rel.length>=2?getHist(d.ticker):[];
+            const isE=emerging.has(d.ticker);
+            const isH=tab==="live"&&md&&parseFloat(md)>150;
+            return React.createElement("tr",{key:d.ticker,className:sel===d.ticker?"sel":"",onClick:()=>setSel(sel===d.ticker?null:d.ticker),style:{cursor:"pointer"}},
+              React.createElement("td",null,React.createElement("span",{className:"muted"},d.rank),rd>0&&React.createElement("span",{className:"ru"}," ▲"+rd),rd<0&&React.createElement("span",{className:"rd"}," ▼"+Math.abs(rd))),
+              React.createElement("td",null,React.createElement("span",{className:"tp"},d.ticker),isE&&tab!=="emerging"&&React.createElement("span",{className:"np"},"NEW"),isH&&React.createElement("span",{className:"hp"},"HOT")),
+              React.createElement("td",{style:{color:"#8b949e",maxWidth:"180px",overflow:"hidden",textOverflow:"ellipsis"}},d.name),
+              React.createElement("td",{style:{fontWeight:600}},fmt(d.mentions)),
+              React.createElement("td",{style:{color:"#6e7681"}},fmt(d.upvotes)),
+              React.createElement("td",null,React.createElement(Trend,{val:md})),
+              isTrendTab&&React.createElement("td",null,React.createElement(Trend,{val:d.trend})),
+              (tab==="live"||tab==="emerging")&&rel.length>=2&&React.createElement("td",null,React.createElement(Spark,{data:hist,color:hist.length>1&&hist[hist.length-1]?.v>hist[0]?.v?"#3fb950":"#f85149"}))
+            );
+          }))
+        )
+      ),
+      sel&&selStock&&React.createElement("div",{className:"detail"},
+        React.createElement("div",{className:"dh"},
+          React.createElement("div",null,
+            React.createElement("span",{className:"tp",style:{fontSize:"15px"}},sel)," ",
+            React.createElement("span",{style:{color:"#8b949e"}},selStock.name)," ",
+            React.createElement("span",{style:{color:"#6e7681",fontSize:"12px"}},"Rang #"+selStock.rank)
+          ),
+          React.createElement("div",{className:"ds"},
+            React.createElement("span",null,"Mentions: ",React.createElement("strong",null,fmt(selStock.mentions))),
+            getMA(sel,rel,fk,5)!==null&&React.createElement("span",null,"MM5J: ",React.createElement(Trend,{val:getMA(sel,rel,fk,5)})),
+            getMA(sel,rel,fk,10)!==null&&React.createElement("span",null,"MM10J: ",React.createElement(Trend,{val:getMA(sel,rel,fk,10)})),
+            getMA(sel,rel,fk,30)!==null&&React.createElement("span",null,"MM30J: ",React.createElement(Trend,{val:getMA(sel,rel,fk,30)}))
+          )
+        ),
+        selHist.length>1?React.createElement(React.Fragment,null,
+          React.createElement("div",{className:"cl"},"Mentions dans le temps"),
+          React.createElement(LineChartCanvas,{data:selHist,dataKey:"v",color:"#58a6ff",label:"Mentions"}),
+          React.createElement("div",{className:"cl"},"Rang (↓ = meilleur)"),
+          React.createElement(LineChartCanvas,{data:selHist.filter(d=>d.rank),dataKey:"rank",color:"#d29922",label:"Rang"})
+        ):React.createElement("div",{style:{color:"#6e7681",fontSize:"13px",paddingTop:"8px"}},"Pas encore assez d'historique pour ce ticker.")
+      )
+    )
+  );
+}
+ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
+</script>
+</body>
+</html>
