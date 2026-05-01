@@ -5,7 +5,7 @@ import { fileURLToPath } from "url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_PATH = join(__dirname, "../data/history.json");
 const API = "https://apewisdom.io/api/v1.0";
-const MAX_SNAPSHOTS = 120;
+const MAX_SNAPSHOTS = 500;
 const FILTERS = ["wallstreetbets", "all-stocks"];
 
 async function fetchFilter(filter) {
