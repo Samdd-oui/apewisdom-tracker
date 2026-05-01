@@ -2,7 +2,9 @@ name: Fetch ApeWisdom Data
 
 on:
   schedule:
-    - cron: '0 7 * * *'
+    - cron: '0 5 * * *'      # 7h00 Paris (UTC+2 été)
+    - cron: '0 13 * * *'     # 15h00 Paris
+    - cron: '30 21 * * *'    # 23h30 Paris
   workflow_dispatch:
 
 jobs:
