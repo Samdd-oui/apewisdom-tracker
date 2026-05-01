@@ -6,356 +6,221 @@
 <title>ApeWisdom Tracker</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.5.0/Recharts.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#0d1117;--bg2:#161b22;--bg3:#21262d;
-  --border:#30363d;--border2:#484f58;
-  --text:#e6edf3;--text2:#8b949e;--text3:#6e7681;
-  --green:#3fb950;--red:#f85149;--yellow:#d29922;--blue:#58a6ff;
-  --green-bg:#0d1f12;--red-bg:#1f0d0d;--yellow-bg:#1f1800;--blue-bg:#0d1a2e;
-  --radius:6px;--radius2:10px;
-}
-body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;line-height:1.5}
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--border:#30363d;--border2:#484f58;--text:#e6edf3;--text2:#8b949e;--text3:#6e7681;--green:#3fb950;--red:#f85149;--yellow:#d29922;--blue:#58a6ff;--green-bg:#0d1f12;--red-bg:#1f0d0d;--yellow-bg:#1f1800;--blue-bg:#0d1a2e;--r:6px;--r2:10px}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px}
 #root{max-width:1100px;margin:0 auto;padding:16px}
 .header{display:flex;align-items:center;justify-content:space-between;padding-bottom:12px;border-bottom:1px solid var(--border);margin-bottom:16px;flex-wrap:wrap;gap:8px}
-.logo{display:flex;align-items:center;gap:10px}
-.logo-text{font-size:17px;font-weight:600;letter-spacing:-0.3px}
+.logo-text{font-size:17px;font-weight:600}
 .logo-sub{font-size:12px;color:var(--text3);font-family:monospace}
 .badge{font-size:11px;padding:2px 8px;border-radius:99px;font-weight:500}
-.badge-green{background:var(--green-bg);color:var(--green);border:1px solid #1a4d25}
-.badge-yellow{background:var(--yellow-bg);color:var(--yellow);border:1px solid #4d3800}
-.badge-blue{background:var(--blue-bg);color:var(--blue);border:1px solid #0d2a50}
+.bg{background:var(--green-bg);color:var(--green);border:1px solid #1a4d25}
+.by{background:var(--yellow-bg);color:var(--yellow);border:1px solid #4d3800}
 .header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .last-fetch{font-size:12px;color:var(--text3)}
-.btn{background:transparent;color:var(--text);border:1px solid var(--border2);font-size:13px;padding:5px 14px;border-radius:var(--radius);cursor:pointer;transition:background .15s;white-space:nowrap}
+.btn{background:transparent;color:var(--text);border:1px solid var(--border2);font-size:13px;padding:5px 14px;border-radius:var(--r);cursor:pointer;transition:background .15s}
 .btn:hover{background:var(--bg3)}
-.btn-blue{background:#1b3a5c;color:var(--blue);border-color:#1f4f80}
-.btn-blue:hover{background:#1f4f80}
 .btn-sm{padding:3px 10px;font-size:12px}
 .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;margin-bottom:16px}
-.metric{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);padding:12px 14px}
-.metric-label{font-size:11px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
-.metric-val{font-size:22px;font-weight:600;color:var(--text)}
-.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:14px;overflow-x:auto}
-.tab{font-size:13px;padding:7px 16px;cursor:pointer;color:var(--text2);background:none;border:none;border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s}
+.metric{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:12px 14px}
+.ml{font-size:11px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.mv{font-size:22px;font-weight:600}
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:14px;overflow-x:auto}
+.tab{font-size:13px;padding:7px 16px;cursor:pointer;color:var(--text2);background:none;border:none;border-bottom:2px solid transparent;white-space:nowrap}
 .tab:hover{color:var(--text)}
 .tab.active{color:var(--text);border-bottom-color:var(--blue)}
-.filter-row{display:flex;gap:8px;margin-bottom:10px;align-items:center;flex-wrap:wrap}
-select{background:var(--bg2);color:var(--text);border:1px solid var(--border);font-size:13px;padding:5px 10px;border-radius:var(--radius);cursor:pointer}
-input[type=text]{background:var(--bg2);color:var(--text);border:1px solid var(--border);font-size:13px;padding:5px 10px;border-radius:var(--radius);width:150px;outline:none}
-input[type=text]:focus{border-color:var(--border2)}
-.filter-label{font-size:12px;color:var(--text3)}
-.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius2)}
+.frow{display:flex;gap:8px;margin-bottom:10px;align-items:center;flex-wrap:wrap}
+select{background:var(--bg2);color:var(--text);border:1px solid var(--border);font-size:13px;padding:5px 10px;border-radius:var(--r);cursor:pointer}
+input[type=text]{background:var(--bg2);color:var(--text);border:1px solid var(--border);font-size:13px;padding:5px 10px;border-radius:var(--r);width:150px;outline:none}
+.fl{font-size:12px;color:var(--text3)}
+.tw{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r2)}
 table{width:100%;border-collapse:collapse;font-size:13px}
 th{text-align:left;padding:8px 12px;font-weight:500;color:var(--text3);background:var(--bg2);border-bottom:1px solid var(--border);white-space:nowrap;font-size:11px;text-transform:uppercase;letter-spacing:.05em}
 td{padding:8px 12px;border-bottom:1px solid var(--border);color:var(--text);white-space:nowrap}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:var(--bg2)}
 tr.sel td{background:#0d1a2e}
-.ticker-pill{font-family:monospace;font-size:12px;font-weight:600;padding:2px 7px;border-radius:4px;background:var(--bg3);border:1px solid var(--border2);color:var(--blue)}
-.up{color:var(--green)}
-.down{color:var(--red)}
-.muted{color:var(--text3)}
-.new-pill{font-size:10px;padding:1px 5px;border-radius:3px;background:var(--yellow-bg);color:var(--yellow);border:1px solid #4d3800;font-weight:600;margin-left:5px;vertical-align:middle}
-.hot-pill{font-size:10px;padding:1px 5px;border-radius:3px;background:var(--red-bg);color:#ff7b72;border:1px solid #4d1a1a;font-weight:600;margin-left:5px;vertical-align:middle}
-.detail{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);padding:14px;margin-top:14px}
-.detail-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;flex-wrap:wrap;gap:8px}
-.detail-title{font-size:15px;font-weight:600}
-.detail-stats{display:flex;gap:16px;font-size:13px;flex-wrap:wrap}
-.chart-section{margin-bottom:8px}
-.chart-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
-.empty{text-align:center;padding:3rem;color:var(--text3);font-size:14px}
-.info-box{background:var(--blue-bg);border:1px solid #0d2a50;border-radius:var(--radius2);padding:14px 16px;font-size:13px;color:var(--blue);margin-bottom:14px;line-height:1.7}
+.tp{font-family:monospace;font-size:12px;font-weight:600;padding:2px 7px;border-radius:4px;background:var(--bg3);border:1px solid var(--border2);color:var(--blue)}
+.up{color:var(--green)}.down{color:var(--red)}.muted{color:var(--text3)}
+.np{font-size:10px;padding:1px 5px;border-radius:3px;background:var(--yellow-bg);color:var(--yellow);border:1px solid #4d3800;font-weight:600;margin-left:5px}
+.hp{font-size:10px;padding:1px 5px;border-radius:3px;background:var(--red-bg);color:#ff7b72;border:1px solid #4d1a1a;font-weight:600;margin-left:5px}
+.detail{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:14px;margin-top:14px}
+.dh{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.ds{display:flex;gap:16px;font-size:13px;flex-wrap:wrap}
+.cl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin:12px 0 6px}
+.info-box{background:var(--blue-bg);border:1px solid #0d2a50;border-radius:var(--r2);padding:14px 16px;font-size:13px;color:var(--blue);margin-bottom:14px;line-height:1.8}
 .info-box code{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padding:1px 6px;font-family:monospace;font-size:12px;color:var(--text)}
-.error-box{background:var(--red-bg);border:1px solid #4d1a1a;border-radius:var(--radius2);padding:12px 14px;font-size:13px;color:#ff7b72;margin-bottom:14px}
-.rank-up{color:var(--green);font-size:11px}
-.rank-down{color:var(--red);font-size:11px}
-.loading{display:flex;align-items:center;justify-content:center;padding:2rem;color:var(--text3);gap:10px}
-.spinner{width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite}
+.ru{color:var(--green);font-size:11px}.rd{color:var(--red);font-size:11px}
+.spin{display:flex;align-items:center;justify-content:center;padding:3rem;color:var(--text3);gap:10px}
+.sp{width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.spark-wrap{display:inline-block;vertical-align:middle}
+svg.spark{display:inline-block;vertical-align:middle}
 </style>
 </head>
 <body>
 <div id="root"></div>
 <script>
-const {useState,useEffect,useMemo,useCallback}=React;
-const {LineChart,Line,XAxis,YAxis,Tooltip,ResponsiveContainer,CartesianGrid}=Recharts;
-
-const COLORS={text:"#e6edf3",text2:"#8b949e",text3:"#6e7681",green:"#3fb950",red:"#f85149",blue:"#58a6ff",yellow:"#d29922",border:"#30363d",bg2:"#161b22"};
-
+const {useState,useEffect,useMemo,useRef}=React;
 function fmt(n){if(!n&&n!==0)return"—";n=parseInt(n);return n>=1000?(n/1000).toFixed(1)+"k":String(n)}
-function pct(a,b){const va=parseInt(a),vb=parseInt(b);if(!vb||vb===0)return null;return(((va-vb)/vb)*100).toFixed(0)}
+function pct(a,b){const va=parseInt(a),vb=parseInt(b);if(!vb)return null;return(((va-vb)/vb)*100).toFixed(0)}
 function fmtDate(ts){try{return new Date(ts).toLocaleString('fr-FR',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}catch(e){return ts}}
 function fmtDay(ts){try{return new Date(ts).toLocaleDateString('fr-FR',{month:'short',day:'numeric'})}catch(e){return ts}}
-
-function Trend({val,suffix="%"}){
-  if(val===null||val===undefined||val==="")return React.createElement("span",{className:"muted"},"—");
-  const v=parseFloat(val);
-  if(isNaN(v))return React.createElement("span",{className:"muted"},"—");
-  const cls=v>0?"up":v<0?"down":"muted";
-  const sign=v>0?"+":"";
-  return React.createElement("span",{className:cls},sign+v+suffix);
+function Trend({val}){
+  if(val===null||val===undefined)return React.createElement("span",{className:"muted"},"—");
+  const v=parseFloat(val);if(isNaN(v))return React.createElement("span",{className:"muted"},"—");
+  return React.createElement("span",{className:v>0?"up":v<0?"down":"muted"},(v>0?"+":"")+v+"%");
 }
-
-function Sparkline({data,color}){
+function Spark({data,color}){
   if(!data||data.length<2)return null;
-  const w=60,h=18;
-  const vals=data.map(d=>d.v);
-  const mn=Math.min(...vals),mx=Math.max(...vals);
-  const range=mx-mn||1;
+  const w=60,h=18,vals=data.map(d=>d.v);
+  const mn=Math.min(...vals),mx=Math.max(...vals),range=mx-mn||1;
   const pts=vals.map((v,i)=>`${(i/(vals.length-1))*w},${h-(((v-mn)/range)*(h-2))-1}`).join(" ");
-  return React.createElement("svg",{width:w,height:h,className:"spark-wrap"},
-    React.createElement("polyline",{points:pts,fill:"none",stroke:color||COLORS.blue,strokeWidth:"1.5",strokeLinejoin:"round"})
-  );
+  return React.createElement("svg",{width:w,height:h,className:"spark"},
+    React.createElement("polyline",{points:pts,fill:"none",stroke:color||"#58a6ff",strokeWidth:"1.5",strokeLinejoin:"round"}));
 }
-
+function LineChartCanvas({data,dataKey,color,label}){
+  const ref=useRef();const chartRef=useRef();
+  useEffect(()=>{
+    if(!ref.current||!data||data.length<2)return;
+    if(chartRef.current)chartRef.current.destroy();
+    chartRef.current=new Chart(ref.current,{
+      type:"line",
+      data:{labels:data.map(d=>d.date),datasets:[{label,data:data.map(d=>d[dataKey]),borderColor:color,borderWidth:2,pointRadius:0,tension:0.3,fill:false}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:"#6e7681",maxTicksLimit:6,font:{size:11}},grid:{color:"#30363d"}},y:{ticks:{color:"#6e7681",font:{size:11}},grid:{color:"#30363d"}}}}
+    });
+    return()=>{if(chartRef.current)chartRef.current.destroy()};
+  },[data,dataKey,color,label]);
+  return React.createElement("div",{style:{height:"180px",position:"relative"}},
+    React.createElement("canvas",{ref,role:"img","aria-label":label}));
+}
 function App(){
   const [history,setHistory]=useState([]);
   const [loading,setLoading]=useState(true);
   const [error,setError]=useState(null);
   const [tab,setTab]=useState("live");
-  const [filterKey,setFilterKey]=useState("wallstreetbets");
-  const [selected,setSelected]=useState(null);
+  const [fk,setFk]=useState("wallstreetbets");
+  const [sel,setSel]=useState(null);
   const [search,setSearch]=useState("");
-  const [sortBy,setSortBy]=useState(null);
-
   useEffect(()=>{
-    fetch("data/history.json")
-      .then(r=>{if(!r.ok)throw new Error("Fichier introuvable");return r.json()})
+    fetch("data/history.json?_="+Date.now())
+      .then(r=>{if(!r.ok)throw new Error("HTTP "+r.status);return r.json()})
       .then(d=>{setHistory(Array.isArray(d)?d:[]);setLoading(false)})
       .catch(e=>{setError(e.message);setLoading(false)});
   },[]);
-
-  const relevant=useMemo(()=>
-    history.filter(s=>s.filters&&s.filters[filterKey])
-  ,[history,filterKey]);
-
-  const latest=relevant[relevant.length-1];
-
-  function getSnapsInDays(days){
-    const cut=Date.now()-days*864e5;
-    return relevant.filter(s=>new Date(s.ts).getTime()>=cut);
-  }
-
+  const rel=useMemo(()=>history.filter(s=>s.filters&&s.filters[fk]),[history,fk]);
+  const latest=rel[rel.length-1];
+  const ld=useMemo(()=>latest?.filters[fk]||[],[latest,fk]);
+  function snapsInDays(days){const cut=Date.now()-days*864e5;return rel.filter(s=>new Date(s.ts)>=cut)}
   function getTrend(ticker,days){
-    const snaps=getSnapsInDays(days);
-    if(snaps.length<2)return null;
-    const cur=latest?.filters[filterKey]?.find(d=>d.ticker===ticker)?.mentions;
-    const old=snaps[0]?.filters[filterKey]?.find(d=>d.ticker===ticker)?.mentions;
+    const s=snapsInDays(days);if(s.length<2)return null;
+    const cur=ld.find(d=>d.ticker===ticker)?.mentions;
+    const old=s[0]?.filters[fk]?.find(d=>d.ticker===ticker)?.mentions;
     return pct(cur,old);
   }
-
-  function getHistory(ticker){
-    return relevant.map(s=>{
-      const d=s.filters[filterKey]?.find(x=>x.ticker===ticker);
-      return{ts:s.ts,v:d?d.mentions:0,rank:d?d.rank:null};
-    }).filter(d=>d.v>0);
+  function getHist(ticker){
+    return rel.map(s=>{const d=s.filters[fk]?.find(x=>x.ticker===ticker);return{ts:s.ts,date:fmtDay(s.ts),v:d?d.mentions:0,rank:d?d.rank:null}}).filter(d=>d.v>0);
   }
-
-  const latestData=useMemo(()=>latest?.filters[filterKey]||[],[latest,filterKey]);
-
   const emerging=useMemo(()=>{
-    if(relevant.length<3)return new Set();
-    const cut=Math.max(0,relevant.length-4);
-    const early=relevant.slice(0,cut).flatMap(s=>s.filters[filterKey]?.slice(0,100).map(d=>d.ticker)||[]);
-    const earlySet=new Set(early);
-    const recent=relevant.slice(cut).flatMap(s=>s.filters[filterKey]?.slice(0,100).map(d=>d.ticker)||[]);
-    return new Set(recent.filter(t=>!earlySet.has(t)));
-  },[relevant,filterKey]);
-
+    if(rel.length<3)return new Set();
+    const cut=Math.max(0,rel.length-4);
+    const early=new Set(rel.slice(0,cut).flatMap(s=>s.filters[fk]?.slice(0,100).map(d=>d.ticker)||[]));
+    const recent=rel.slice(cut).flatMap(s=>s.filters[fk]?.slice(0,100).map(d=>d.ticker)||[]);
+    return new Set(recent.filter(t=>!early.has(t)));
+  },[rel,fk]);
   const trendRows=useMemo(()=>{
-    const days=tab==="5d"?5:30;
     if(tab!=="5d"&&tab!=="30d")return[];
-    return latestData.slice(0,150).map(d=>({
-      ...d,
-      trend:getTrend(d.ticker,days)
-    })).filter(d=>d.trend!==null).sort((a,b)=>parseFloat(b.trend)-parseFloat(a.trend));
-  },[tab,latestData,relevant]);
-
-  const emergingRows=useMemo(()=>
-    latestData.filter(d=>emerging.has(d.ticker)).slice(0,40)
-  ,[latestData,emerging]);
-
-  let displayData=[];
-  if(tab==="live")displayData=latestData.slice(0,100);
-  else if(tab==="5d"||tab==="30d")displayData=trendRows;
-  else if(tab==="emerging")displayData=emergingRows;
-
-  if(search){
-    const s=search.toUpperCase();
-    displayData=displayData.filter(d=>d.ticker?.toUpperCase().includes(s)||d.name?.toUpperCase().includes(s));
-  }
-
-  const selStock=latestData.find(d=>d.ticker===selected);
-  const selHistory=selected?getHistory(selected):[];
-
-  const tabs=[
-    {id:"live",label:"Live"},
-    {id:"5d",label:"Top 5J"},
-    {id:"30d",label:"Top 30J"},
-    {id:"emerging",label:`Émergents${emerging.size>0?" ("+emerging.size+")":""}`},
-  ];
-
-  const filters=[
-    {value:"wallstreetbets",label:"r/wallstreetbets"},
-    {value:"all-stocks",label:"All stocks"},
-    {value:"stocks",label:"r/stocks"},
-    {value:"options",label:"r/options"},
-    {value:"investing",label:"r/investing"},
-    {value:"Daytrading",label:"r/Daytrading"},
-  ];
-
-  if(loading)return React.createElement("div",{className:"loading"},React.createElement("div",{className:"spinner"}),React.createElement("span",null,"Chargement…"));
-
+    const days=tab==="5d"?5:30;
+    return ld.slice(0,150).map(d=>({...d,trend:getTrend(d.ticker,days)})).filter(d=>d.trend!==null).sort((a,b)=>parseFloat(b.trend)-parseFloat(a.trend));
+  },[tab,ld,rel,fk]);
+  let rows=[];
+  if(tab==="live")rows=ld.slice(0,100);
+  else if(tab==="5d"||tab==="30d")rows=trendRows;
+  else if(tab==="emerging")rows=ld.filter(d=>emerging.has(d.ticker)).slice(0,40);
+  if(search){const s=search.toUpperCase();rows=rows.filter(d=>d.ticker?.toUpperCase().includes(s)||d.name?.toUpperCase().includes(s))}
+  const selStock=ld.find(d=>d.ticker===sel);
+  const selHist=sel?getHist(sel):[];
+  const tabs=[{id:"live",l:"Live"},{id:"5d",l:"Tendance 5J"},{id:"30d",l:"Tendance 30J"},{id:"emerging",l:"Émergents"+(emerging.size>0?" ("+emerging.size+")":"")}];
+  const filts=[{v:"wallstreetbets",l:"r/wallstreetbets"},{v:"all-stocks",l:"All stocks"},{v:"stocks",l:"r/stocks"},{v:"options",l:"r/options"},{v:"investing",l:"r/investing"},{v:"Daytrading",l:"r/Daytrading"}];
+  if(loading)return React.createElement("div",{className:"spin"},React.createElement("div",{className:"sp"}),React.createElement("span",null,"Chargement…"));
   return React.createElement("div",null,
     React.createElement("div",{className:"header"},
-      React.createElement("div",{className:"logo"},
-        React.createElement("span",{style:{fontSize:"20px"}},"🦍"),
-        React.createElement("div",null,
-          React.createElement("div",{className:"logo-text"},"ApeWisdom Tracker"),
-          React.createElement("div",{className:"logo-sub"},"Reddit sentiment • historique automatique")
-        )
+      React.createElement("div",null,
+        React.createElement("div",{className:"logo-text"},"🦍 ApeWisdom Tracker"),
+        React.createElement("div",{className:"logo-sub"},"Reddit sentiment • historique automatique")
       ),
       React.createElement("div",{className:"header-right"},
-        relevant.length>0&&React.createElement("span",{className:"last-fetch"},"Dernier: "+fmtDate(latest?.ts)),
-        React.createElement("span",{className:"badge "+(relevant.length>0?"badge-green":"badge-yellow")},
-          relevant.length>0?relevant.length+" snapshots":"Aucune donnée"
-        ),
+        rel.length>0&&React.createElement("span",{className:"last-fetch"},"Dernier: "+fmtDate(latest?.ts)),
+        React.createElement("span",{className:"badge "+(rel.length>0?"bg":"by")},rel.length>0?rel.length+" snapshots":"Aucune donnée"),
         React.createElement("button",{className:"btn btn-sm",onClick:()=>window.location.reload()},"↻ Refresh")
       )
     ),
-
-    error&&React.createElement("div",{className:"error-box"},"Erreur: "+error),
-
-    relevant.length===0&&!error&&React.createElement("div",{className:"info-box"},
-      React.createElement("strong",null,"Aucune donnée pour l'instant."),React.createElement("br",null),
-      "Le GitHub Action tourne automatiquement chaque matin à 9h (Paris). Pour forcer une mise à jour maintenant :",React.createElement("br",null),
-      "1. Ouvre ton repo GitHub sur mobile",React.createElement("br",null),
-      "2. Onglet ",React.createElement("code",null,"Actions")," → ",React.createElement("code",null,"Fetch ApeWisdom Data"),React.createElement("br",null),
-      "3. ",React.createElement("code",null,"Run workflow")," → ",React.createElement("code",null,"Run workflow")
+    error&&React.createElement("div",{style:{background:"#1f0d0d",border:"1px solid #4d1a1a",borderRadius:"10px",padding:"12px 14px",color:"#ff7b72",marginBottom:"14px",fontSize:"13px"}},"Erreur: "+error),
+    rel.length===0&&!error&&React.createElement("div",{className:"info-box"},
+      React.createElement("strong",null,"Aucune donnée encore."),React.createElement("br",null),
+      "Le GitHub Action tourne automatiquement chaque matin à 9h Paris.",React.createElement("br",null),
+      "Pour forcer: repo GitHub → onglet ",React.createElement("code",null,"Actions")," → ",React.createElement("code",null,"Fetch ApeWisdom Data")," → ",React.createElement("code",null,"Run workflow")
     ),
-
-    relevant.length>0&&React.createElement(React.Fragment,null,
+    rel.length>0&&React.createElement(React.Fragment,null,
       React.createElement("div",{className:"metrics"},
-        React.createElement("div",{className:"metric"},React.createElement("div",{className:"metric-label"},"Stocks live"),React.createElement("div",{className:"metric-val"},latestData.length)),
-        React.createElement("div",{className:"metric"},React.createElement("div",{className:"metric-label"},"Snapshots"),React.createElement("div",{className:"metric-val"},relevant.length)),
-        React.createElement("div",{className:"metric"},React.createElement("div",{className:"metric-label"},"Émergents"),React.createElement("div",{className:"metric-val"},emerging.size)),
-        React.createElement("div",{className:"metric"},React.createElement("div",{className:"metric-label"},"Jours d'histo"),React.createElement("div",{className:"metric-val"},
-          relevant.length>1?Math.round((new Date(relevant[relevant.length-1].ts)-new Date(relevant[0].ts))/864e5):0
-        ))
+        [{l:"Stocks live",v:ld.length},{l:"Snapshots",v:rel.length},{l:"Émergents",v:emerging.size},{l:"Jours d'histo",v:rel.length>1?Math.round((new Date(rel[rel.length-1].ts)-new Date(rel[0].ts))/864e5):0}]
+          .map(m=>React.createElement("div",{key:m.l,className:"metric"},React.createElement("div",{className:"ml"},m.l),React.createElement("div",{className:"mv"},m.v)))
       ),
-
-      React.createElement("div",{className:"tabs"},
-        tabs.map(t=>React.createElement("button",{key:t.id,className:"tab"+(tab===t.id?" active":""),onClick:()=>{setTab(t.id);setSelected(null)}},t.label))
-      ),
-
-      React.createElement("div",{className:"filter-row"},
-        React.createElement("span",{className:"filter-label"},"Source:"),
-        React.createElement("select",{value:filterKey,onChange:e=>{setFilterKey(e.target.value);setSelected(null)}},
-          filters.map(f=>React.createElement("option",{key:f.value,value:f.value},f.label))
-        ),
+      React.createElement("div",{className:"tabs"},tabs.map(t=>React.createElement("button",{key:t.id,className:"tab"+(tab===t.id?" active":""),onClick:()=>{setTab(t.id);setSel(null)}},t.l))),
+      React.createElement("div",{className:"frow"},
+        React.createElement("span",{className:"fl"},"Source:"),
+        React.createElement("select",{value:fk,onChange:e=>{setFk(e.target.value);setSel(null)}},filts.map(f=>React.createElement("option",{key:f.v,value:f.v},f.l))),
         React.createElement("input",{type:"text",placeholder:"Rechercher…",value:search,onChange:e=>setSearch(e.target.value)}),
         search&&React.createElement("button",{className:"btn btn-sm",onClick:()=>setSearch("")},"✕"),
-        React.createElement("span",{className:"filter-label",style:{marginLeft:"auto"}},displayData.length+" résultats")
+        React.createElement("span",{className:"fl",style:{marginLeft:"auto"}},rows.length+" résultats")
       ),
-
-      React.createElement("div",{className:"table-wrap"},
+      React.createElement("div",{className:"tw"},
         React.createElement("table",null,
-          React.createElement("thead",null,
-            React.createElement("tr",null,
-              React.createElement("th",null,"#"),
-              React.createElement("th",null,"Ticker"),
-              React.createElement("th",null,"Nom"),
-              React.createElement("th",null,"Mentions"),
-              React.createElement("th",null,"Upvotes"),
-              React.createElement("th",null,"Δ 24h"),
-              (tab==="5d"||tab==="30d")&&React.createElement("th",null,"Trend"),
-              (tab==="live"||tab==="emerging")&&relevant.length>=2&&React.createElement("th",null,"Histo")
-            )
-          ),
-          React.createElement("tbody",null,
-            displayData.slice(0,60).map(d=>{
-              const rankDiff=d.rank_24h_ago&&d.rank_24h_ago>0?d.rank_24h_ago-d.rank:null;
-              const mentDiff=pct(d.mentions,d.mentions_24h_ago);
-              const hist=relevant.length>=2&&(tab==="live"||tab==="emerging")?getHistory(d.ticker):[];
-              const isEmerging=emerging.has(d.ticker);
-              const isHot=tab==="live"&&mentDiff&&parseFloat(mentDiff)>150;
-              return React.createElement("tr",{
-                key:d.ticker,
-                className:selected===d.ticker?"sel":"",
-                onClick:()=>setSelected(selected===d.ticker?null:d.ticker),
-                style:{cursor:"pointer"}
-              },
-                React.createElement("td",null,
-                  React.createElement("span",{className:"muted"},d.rank),
-                  rankDiff!==null&&rankDiff>0&&React.createElement("span",{className:"rank-up"}," ▲"+rankDiff),
-                  rankDiff!==null&&rankDiff<0&&React.createElement("span",{className:"rank-down"}," ▼"+Math.abs(rankDiff))
-                ),
-                React.createElement("td",null,
-                  React.createElement("span",{className:"ticker-pill"},d.ticker),
-                  isEmerging&&tab!=="emerging"&&React.createElement("span",{className:"new-pill"},"NEW"),
-                  isHot&&React.createElement("span",{className:"hot-pill"},"HOT")
-                ),
-                React.createElement("td",{style:{color:COLORS.text2,maxWidth:"180px",overflow:"hidden",textOverflow:"ellipsis"}},d.name),
-                React.createElement("td",{style:{fontWeight:600}},fmt(d.mentions)),
-                React.createElement("td",{style:{color:COLORS.text3}},fmt(d.upvotes)),
-                React.createElement("td",null,React.createElement(Trend,{val:mentDiff})),
-                (tab==="5d"||tab==="30d")&&React.createElement("td",null,React.createElement(Trend,{val:d.trend})),
-                (tab==="live"||tab==="emerging")&&relevant.length>=2&&React.createElement("td",null,
-                  React.createElement(Sparkline,{data:hist,color:hist.length>1&&hist[hist.length-1]?.v>hist[0]?.v?COLORS.green:COLORS.red})
-                )
-              );
-            })
-          )
+          React.createElement("thead",null,React.createElement("tr",null,
+            React.createElement("th",null,"#"),React.createElement("th",null,"Ticker"),React.createElement("th",null,"Nom"),
+            React.createElement("th",null,"Mentions"),React.createElement("th",null,"Upvotes"),React.createElement("th",null,"Δ 24h"),
+            (tab==="5d"||tab==="30d")&&React.createElement("th",null,"Trend"),
+            (tab==="live"||tab==="emerging")&&rel.length>=2&&React.createElement("th",null,"Histo")
+          )),
+          React.createElement("tbody",null,rows.slice(0,60).map(d=>{
+            const rd=d.rank_24h_ago&&d.rank_24h_ago>0?d.rank_24h_ago-d.rank:null;
+            const md=pct(d.mentions,d.mentions_24h_ago);
+            const hist=(tab==="live"||tab==="emerging")&&rel.length>=2?getHist(d.ticker):[];
+            const isE=emerging.has(d.ticker);
+            const isH=tab==="live"&&md&&parseFloat(md)>150;
+            return React.createElement("tr",{key:d.ticker,className:sel===d.ticker?"sel":"",onClick:()=>setSel(sel===d.ticker?null:d.ticker),style:{cursor:"pointer"}},
+              React.createElement("td",null,React.createElement("span",{className:"muted"},d.rank),rd>0&&React.createElement("span",{className:"ru"}," ▲"+rd),rd<0&&React.createElement("span",{className:"rd"}," ▼"+Math.abs(rd))),
+              React.createElement("td",null,React.createElement("span",{className:"tp"},d.ticker),isE&&tab!=="emerging"&&React.createElement("span",{className:"np"},"NEW"),isH&&React.createElement("span",{className:"hp"},"HOT")),
+              React.createElement("td",{style:{color:"#8b949e",maxWidth:"180px",overflow:"hidden",textOverflow:"ellipsis"}},d.name),
+              React.createElement("td",{style:{fontWeight:600}},fmt(d.mentions)),
+              React.createElement("td",{style:{color:"#6e7681"}},fmt(d.upvotes)),
+              React.createElement("td",null,React.createElement(Trend,{val:md})),
+              (tab==="5d"||tab==="30d")&&React.createElement("td",null,React.createElement(Trend,{val:d.trend})),
+              (tab==="live"||tab==="emerging")&&rel.length>=2&&React.createElement("td",null,React.createElement(Spark,{data:hist,color:hist.length>1&&hist[hist.length-1]?.v>hist[0]?.v?"#3fb950":"#f85149"}))
+            );
+          }))
         )
       ),
-
-      selected&&selStock&&React.createElement("div",{className:"detail"},
-        React.createElement("div",{className:"detail-header"},
+      sel&&selStock&&React.createElement("div",{className:"detail"},
+        React.createElement("div",{className:"dh"},
           React.createElement("div",null,
-            React.createElement("span",{className:"ticker-pill",style:{fontSize:"15px"}},selected),
-            React.createElement("span",{style:{marginLeft:"10px",color:COLORS.text2}},selStock.name),
-            React.createElement("span",{style:{marginLeft:"10px",color:COLORS.text3,fontSize:"12px"}},"Rang #"+selStock.rank)
+            React.createElement("span",{className:"tp",style:{fontSize:"15px"}},sel)," ",
+            React.createElement("span",{style:{color:"#8b949e"}},selStock.name)," ",
+            React.createElement("span",{style:{color:"#6e7681",fontSize:"12px"}},"Rang #"+selStock.rank)
           ),
-          React.createElement("div",{className:"detail-stats"},
+          React.createElement("div",{className:"ds"},
             React.createElement("span",null,"Mentions: ",React.createElement("strong",null,fmt(selStock.mentions))),
-            getTrend(selected,5)!==null&&React.createElement("span",null,"5J: ",React.createElement(Trend,{val:getTrend(selected,5)})),
-            getTrend(selected,30)!==null&&React.createElement("span",null,"30J: ",React.createElement(Trend,{val:getTrend(selected,30)}))
+            getTrend(sel,5)!==null&&React.createElement("span",null,"5J: ",React.createElement(Trend,{val:getTrend(sel,5)})),
+            getTrend(sel,30)!==null&&React.createElement("span",null,"30J: ",React.createElement(Trend,{val:getTrend(sel,30)}))
           )
         ),
-        selHistory.length>1?React.createElement(React.Fragment,null,
-          React.createElement("div",{className:"chart-section"},
-            React.createElement("div",{className:"chart-label"},"Mentions dans le temps"),
-            React.createElement("div",{style:{height:"180px"}},
-              React.createElement(ResponsiveContainer,{width:"100%",height:"100%"},
-                React.createElement(LineChart,{data:selHistory.map(d=>({...d,date:fmtDay(d.ts)}))},
-                  React.createElement(CartesianGrid,{strokeDasharray:"3 3",stroke:COLORS.border}),
-                  React.createElement(XAxis,{dataKey:"date",tick:{fontSize:11,fill:COLORS.text3},interval:"preserveStartEnd"}),
-                  React.createElement(YAxis,{tick:{fontSize:11,fill:COLORS.text3},width:40}),
-                  React.createElement(Tooltip,{contentStyle:{background:COLORS.bg2,border:"1px solid "+COLORS.border,borderRadius:"6px",fontSize:"13px"}}),
-                  React.createElement(Line,{type:"monotone",dataKey:"v",stroke:COLORS.blue,strokeWidth:2,dot:false,name:"Mentions"})
-                )
-              )
-            )
-          ),
-          React.createElement("div",{className:"chart-section"},
-            React.createElement("div",{className:"chart-label"},"Rang (↓ = meilleur)"),
-            React.createElement("div",{style:{height:"150px"}},
-              React.createElement(ResponsiveContainer,{width:"100%",height:"100%"},
-                React.createElement(LineChart,{data:selHistory.map(d=>({...d,date:fmtDay(d.ts)}))},
-                  React.createElement(CartesianGrid,{strokeDasharray:"3 3",stroke:COLORS.border}),
-                  React.createElement(XAxis,{dataKey:"date",tick:{fontSize:11,fill:COLORS.text3},interval:"preserveStartEnd"}),
-                  React.createElement(YAxis,{reversed:true,tick:{fontSize:11,fill:COLORS.text3},width:40}),
-                  React.createElement(Tooltip,{contentStyle:{background:COLORS.bg2,border:"1px solid "+COLORS.border,borderRadius:"6px",fontSize:"13px"}}),
-                  React.createElement(Line,{type:"monotone",dataKey:"rank",stroke:COLORS.yellow,strokeWidth:2,dot:false,name:"Rang"})
-                )
-              )
-            )
-          )
-        ):React.createElement("div",{style:{color:COLORS.text3,fontSize:"13px",padding:"8px 0"}},"Pas encore assez d'historique pour ce ticker.")
+        selHist.length>1?React.createElement(React.Fragment,null,
+          React.createElement("div",{className:"cl"},"Mentions dans le temps"),
+          React.createElement(LineChartCanvas,{data:selHist,dataKey:"v",color:"#58a6ff",label:"Mentions"}),
+          React.createElement("div",{className:"cl"},"Rang (↓ = meilleur)"),
+          React.createElement(LineChartCanvas,{data:selHist.filter(d=>d.rank),dataKey:"rank",color:"#d29922",label:"Rang"})
+        ):React.createElement("div",{style:{color:"#6e7681",fontSize:"13px",paddingTop:"8px"}},"Pas encore assez d'historique pour ce ticker.")
       )
     )
   );
